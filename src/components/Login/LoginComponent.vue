@@ -4,7 +4,7 @@
                 <el-form ref="userRegistform" class="form" :model="regist" status-icon :rules="Registrules">
                     <h2 class="form_title title">创建账号</h2>
                     <div class="form_icons">
-                        <a href="https://github.com/Zjy02/vite-project">
+                        <a href="https://github.com/Zjy02/Admin-manager">
                             <img src="../../assets/github.svg" class="iconsvg" alt="">
                         </a>
                         <img src="../../assets/qq.svg" class="iconsvg" alt="">
@@ -31,7 +31,7 @@
                 <el-form ref="userform" class="form" :model="user" status-icon :rules="rules">
                     <h2 class="form_title title">登入账号</h2>
                     <div class="form_icons">
-                        <a href="https://github.com/Zjy02/vite-project">
+                        <a href="https://github.com/Zjy02/Admin-manager">
                             <img src="../../assets/github.svg" class="iconsvg" alt="">
                         </a>
                         <img src="../../assets/qq.svg" class="iconsvg" alt="">
