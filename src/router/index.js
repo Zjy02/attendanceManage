@@ -3,6 +3,7 @@ import Home from '/src/components/Home.vue';
 import storage from "../utils/storage";
 import API from '../api'
 import util from './../utils/utils'
+
 const routes = [
     {
         name: 'home',
@@ -94,29 +95,29 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes
 })
-//动态的添加路由
-async function loadAsyncRoutes() {
-    let userInfo = storage.getItem("userInfo") || {}
-    if (userInfo.token) {
-        try {
-            const { menuList } = await API.getPermissionList()
-            let routes = util.generateRoute(menuList)
-            routes.map((item) => {
-                let url = `/src/view/${item.component}.vue`
-                item.component = () => import(url)
-                router.addRoute('home', item)
-            })
-        } catch (error) {
+// //动态的添加路由
+// async function loadAsyncRoutes() {
+//     let userInfo = storage.getItem("userInfo") || {}
+//     if (userInfo.token) {
+//         try {
+//             const { menuList } = await API.getPermissionList()
+//             let routes = util.generateRoute(menuList)
+//             routes.map((item) => {
+//                 let url = `/src/view/${item.component}.vue`
+//                 item.component = () => import(url)
+//                 router.addRoute('home', item)
+//             })
+//         } catch (error) {
 
-        }
-    }
-}
+//         }
+//     }
+// }
 
 
-async function loadAsyncRoutesWrapper() {
-    await loadAsyncRoutes();
-}
-loadAsyncRoutesWrapper();
+// async function loadAsyncRoutesWrapper() {
+//     await loadAsyncRoutes();
+// }
+// loadAsyncRoutesWrapper();
 
 
 //判断当前地址是否可以访问
@@ -138,6 +139,14 @@ router.beforeEach((to, from, next) => {
         next()
     } else {
         next('/404')
+    }
+
+    if (!to.fullPath.includes('/login') && !to.fullPath.includes('/404')) {
+        if (storage.getItem('userInfo').token) {
+            next()
+        } else {
+            next('/login')
+        }
     }
 })
 
