@@ -70,6 +70,30 @@ const routes = [
                 },
                 component: () => import('/src/view/Approve.vue'),
             },
+            {
+                name: 'sign',
+                path: '/assess/sign',
+                meta: {
+                    title: '签到'
+                },
+                component: () => import('/src/view/assess/signManage.vue'),
+            },
+            {
+                name: 'assess',
+                path: '/assess/manage',
+                meta: {
+                    title: '薪资管理'
+                },
+                component: () => import('/src/view/assess/assess.vue'),
+            },
+            {
+                name: 'personal',
+                path: '/personal',
+                meta: {
+                    title: '个人中心'
+                },
+                component: () => import('/src/view/personalCenter/personal.vue'),
+            },
         ]
     },
     {

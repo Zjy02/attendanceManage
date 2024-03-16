@@ -10,7 +10,7 @@
         </el-form-item>
 
         <el-form-item label="状态" prop="state">
-          <el-select v-model="user.state">
+          <el-select style="width: 100px" v-model="user.state">
             <el-option label="所有" :value="0" />
             <el-option label="在职" :value="1" />
             <el-option label="离职" :value="2" />

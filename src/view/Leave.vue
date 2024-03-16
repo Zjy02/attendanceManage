@@ -21,7 +21,11 @@
     </div>
     <div class="base-table">
       <div class="action">
-        <el-button type="primary" size="small" @click="handleApply"
+        <el-button
+          type="primary"
+          size="small"
+          @click="handleApply"
+          v-has:add="'leave-apply'"
           >申请休假</el-button
         >
       </div>
@@ -37,13 +41,17 @@
           />
           <el-table-column label="操作" width="200">
             <template #default="scope">
-              <el-button type="primary" @click="handleDetail(scope.row)"
+              <el-button
+                type="primary"
+                @click="handleDetail(scope.row)"
+                v-has:add="'leave-query'"
                 >查看</el-button
               >
               <el-button
                 type="danger"
                 @click="handleDelete(scope.row._id)"
                 v-if="[1, 2].includes(scope.row.applyState)"
+                v-has:add="'leave-delete'"
                 >作废</el-button
               >
             </template>
