@@ -11,7 +11,7 @@ import storage from './utils/storage'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import api from './api'
 import store from './store/index'
-
+import * as directives from './directives'
 
 
 
@@ -34,6 +34,10 @@ app.directive('has', {
       });
     }
   }
+})
+
+Object.keys(directives).forEach(key => {
+  app.directive(key, directives[key])
 })
 
 app.config.globalProperties.$request = request

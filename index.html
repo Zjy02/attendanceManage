@@ -6,6 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin</title>
   </head>
+  <style>
+  .loading-content {
+    --loading-width: 90px;
+    width: var(--loading-width);
+    height: var(--loading-width);
+    max-width: 12vh;
+    max-height: 12vh;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    background-image: url(./src/assets/svg/loading.svg);
+    animation-duration: 2s;
+    animation-name: loading-animation;
+    animation-iteration-count: infinite;
+    animation-timing-function: steps(24);
+  }
+
+  @keyframes loading-animation {
+    0% {
+      background-position-x: 0
+    }
+
+    to {
+      background-position-x: 100%
+    }
+  }
+  </style>
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
