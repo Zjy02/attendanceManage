@@ -12,6 +12,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import api from './api'
 import store from './store/index'
 import * as directives from './directives'
+import 'leaflet/dist/leaflet.css'
 
 
 

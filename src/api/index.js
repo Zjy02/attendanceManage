@@ -2,131 +2,151 @@
 
 import request from "../utils/request"
 export default {
-    login(params){
+    login(params) {
         return request({
-            url:'/users/login',
-            data:params,
-            method:'POST'
+            url: '/users/login',
+            data: params,
+            method: 'POST'
         })
     },
-    noticeCount(){
+    noticeCount() {
         return request({
-            url:'/leaves/count',
-            data:{},
-            method:'GET',
+            url: '/leaves/count',
+            data: {},
+            method: 'GET',
         })
     },
-    muneList(params){
+    muneList(params) {
         return request({
-            url:'/menu/list',
-            data:params,
-            method:'GET',
+            url: '/menu/list',
+            data: params,
+            method: 'GET',
         })
     },
-    getuserList(params){
+    getuserList(params) {
         return request({
-            url:'/users/list',
-            data:params,
-            method:'GET',
+            url: '/users/list',
+            data: params,
+            method: 'GET',
         })
     },
-    getuserAllList(){
+    getuserAllList() {
         return request({
-            url:'/users/all/list',
-            data:{},
-            method:'GET',
+            url: '/users/all/list',
+            data: {},
+            method: 'GET',
         })
     },
-    userDelete(params){
+    userDelete(params) {
         return request({
-            url:'/users/delete',
-            data:params,
-            method:'POST',
+            url: '/users/delete',
+            data: params,
+            method: 'POST',
         })
     },
-    getRoleList(params){
+    getRoleList(params) {
         return request({
-            url:'/roles/list',
-            data:params,
-            method:'GET',
+            url: '/roles/list',
+            data: params,
+            method: 'GET',
         })
     },
-    getRoleAllList(){
+    getRoleAllList() {
         return request({
-            url:'/roles/allList',
-            data:{},
-            method:'GET',
+            url: '/roles/allList',
+            data: {},
+            method: 'GET',
         })
     },
-    getDeptList(params){
+    getDeptList(params) {
         return request({
-            url:'/dept/list',
-            data:params,
-            method:'GET',
+            url: '/dept/list',
+            data: params,
+            method: 'GET',
         })
     },
-    deptOperate(params){
+    deptOperate(params) {
         return request({
-            url:'/dept/operate',
-            data:params,
-            method:'POST',
+            url: '/dept/operate',
+            data: params,
+            method: 'POST',
         })
     },
-    userSubmit(params){
+    userSubmit(params) {
         return request({
-            url:'/users/operate',
-            data:params,
-            method:'POST',
+            url: '/users/operate',
+            data: params,
+            method: 'POST',
         })
     },
-    menuSubmit(params){
+    menuSubmit(params) {
         return request({
-            url:'/menu/operate',
-            data:params,
-            method:'POST',
+            url: '/menu/operate',
+            data: params,
+            method: 'POST',
         })
     },
-    roleOperate(params){
+    roleOperate(params) {
         return request({
-            url:'/roles/operate',
-            data:params,
-            method:'POST',
+            url: '/roles/operate',
+            data: params,
+            method: 'POST',
         })
     },
-    updatePermission(params){
+    updatePermission(params) {
         return request({
-            url:'/roles/update/permission',
-            data:params,
-            method:'POST',
+            url: '/roles/update/permission',
+            data: params,
+            method: 'POST',
         })
     },
-    getPermissionList(){
+    getPermissionList() {
         return request({
-            url:'/users/getPermissionList',
-            data:{},
-            method:'GET',
+            url: '/users/getPermissionList',
+            data: {},
+            method: 'GET',
         })
     },
-    getApplyList(params){
+    getApplyList(params) {
         return request({
-            url:'/leaves/list',
-            data:params,
-            method:'GET',
+            url: '/leaves/list',
+            data: params,
+            method: 'GET',
         })
     },
-    leaveOperate(params){
+    leaveOperate(params) {
         return request({
-            url:'/leaves/operate',
-            data:params,
-            method:'POST',
+            url: '/leaves/operate',
+            data: params,
+            method: 'POST',
         })
     },
-    leaveApprove(params){
+    leaveApprove(params) {
         return request({
-            url:'/leaves/approve',
-            data:params,
-            method:'POST',
+            url: '/leaves/approve',
+            data: params,
+            method: 'POST',
         })
     },
-    
+    signIn(params) {
+        return request({
+            url: '/registrated/sign/start',
+            data: params,
+            method: 'POST',
+        })
+    },
+    signOut(params) {
+        return request({
+            url: '/registrated/sign/end',
+            data: params,
+            method: 'POST',
+        })
+    },
+    querySign(params) {
+        return request({
+            url: '/registrated/sign/query',
+            data: params,
+            method: 'POST',
+        })
+    }
 }
