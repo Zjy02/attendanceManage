@@ -11,36 +11,51 @@
             :src="userInfo?.avatar || defaultAvatarUrl"
           />
           <div class="user-main">
-            <span class="user-name">zhou jin yu</span>
+            <span class="user-name">{{
+              userInfo?.realName || '修改名字'
+            }}</span>
             <span class="user-email">{{ userInfo?.userEmail }}</span>
             <span class="user-role">{{ userInfo?.job }}</span>
+            <el-button
+              size="small"
+              style=""
+              :icon="EditPen"
+              @click="handleEditUser"
+              >修改信息</el-button
+            >
           </div>
         </div>
         <el-card class="user-info" style="border-radius: 10px" shadow="hover">
           <el-row class="user-detail">
             <el-col :span="12" class="col-item"
-              >账号名称：<span>{{ 'admin' }}</span></el-col
+              >账号名称：<span>{{ userInfo?.userName }}</span></el-col
             >
             <el-col :span="12" class="col-item"
-              >姓名：<span>{{ 'zhoujinyu' }}</span></el-col
+              >姓名：<span>{{ userInfo?.realName || '' }}</span></el-col
             >
             <el-col :span="12" class="col-item"
-              >邮箱：<span>{{ '1831783781@qq.com' }}</span></el-col
+              >邮箱：<span>{{ userInfo?.userEmail }}</span></el-col
             >
             <el-col :span="12" class="col-item"
-              >工号：<span>{{ '100012' }}</span></el-col
+              >工号：<span>{{ userInfo?.userId }}</span></el-col
             >
             <el-col :span="12" class="col-item"
-              >性别：<span>{{ '男' }}</span></el-col
+              >性别：<span>{{
+                userInfo?.sex === 1 ? '男' : '女'
+              }}</span></el-col
             >
             <el-col :span="12" class="col-item"
-              >年龄：<span>{{ 20 }}</span></el-col
+              >年龄：<span>{{ userInfo?.age }}</span></el-col
             >
             <el-col :span="12" class="col-item"
-              >入职时间：<span>{{ '2020-03-10' }}</span></el-col
+              >入职时间：<span>{{
+                dayjs(userInfo?.createTime).format('YYYY-MM-DD')
+              }}</span></el-col
             >
             <el-col :span="12" class="col-item"
-              >工龄：<span>{{ 3 }}</span></el-col
+              >工龄：<span>{{
+                dayjs().diff(dayjs(userInfo?.createTime), 'year')
+              }}</span></el-col
             >
           </el-row>
         </el-card>
@@ -70,12 +85,12 @@
                 <el-input
                   v-model="lateReason"
                   style="width: 150px"
-                  placeholder="请输入早退原因"
+                  placeholder="请输入迟到原因"
               /></span>
               <el-button
                 type="primary"
                 circle
-                style="width: 100px; height: 100px"
+                style="width: 100px; height: 100px; margin-top: 20px"
                 @click="signStart"
               >
                 <el-icon size="40"><Promotion /></el-icon>
@@ -94,7 +109,7 @@
               <el-button
                 type="primary"
                 circle
-                style="width: 100px; height: 100px"
+                style="width: 100px; height: 100px; margin-top: 20px"
                 @click="signEnd"
               >
                 <el-icon size="40"><Promotion /></el-icon>
@@ -107,16 +122,23 @@
         </el-row>
       </el-col>
     </el-row>
+    <EditUserInfoDialog
+      :detail-data="userInfo"
+      :showDialog="showDialog"
+      @close="() => (showDialog = false)"
+      @reload="getNewUserInfo"
+    />
   </div>
 </template>
 
 <script setup>
-import { Promotion, Position, Timer } from '@element-plus/icons-vue';
+import { Promotion, Position, Timer, EditPen } from '@element-plus/icons-vue';
 import { onMounted, ref, onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import api from '../../api/index';
 import storage from '../../utils/storage.js';
 import dayjs from 'dayjs';
+import EditUserInfoDialog from './components/EditUserInfoDialog.vue';
 
 let map;
 const userInfo = ref();
@@ -129,6 +151,7 @@ const signTodayMessage = ref({});
 const nowTime = ref();
 const locationName = ref('');
 const location = ref([]);
+const showDialog = ref(false);
 const defaultAvatarUrl =
   'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png';
 const geocoder = new AMap.Geocoder({
@@ -158,7 +181,7 @@ onMounted(() => {
       !isEarly.value &&
       signTodayMessage.value?.workStartTime &&
       !signTodayMessage.value?.workEndTime &&
-      currentHour > 18
+      currentHour < 18
     ) {
       isEarly.value = true;
     }
@@ -171,14 +194,23 @@ onUnmounted(() => {
 
 const getUserInfo = () => {
   userInfo.value = storage.getItem('userInfo');
-  userId.value = userInfo.value.userId;
+  userId.value = userInfo.value?.userId;
+};
+
+const getNewUserInfo = () => {
+  api.getUserInfo().then((res) => {
+    const old = storage.getItem('userInfo');
+    Object.assign(old, res);
+    storage.setItem('userInfo', old);
+    getUserInfo();
+  });
 };
 
 const querySignRecrods = () => {
   const time = dayjs().format('YYYY-MM-DD');
   api.querySign({ userId: userId.value, time }).then((res) => {
     signTodayMessage.value = res || null;
-    locationName.value = signTodayMessage.value.startLocationName
+    locationName.value = signTodayMessage.value?.startLocationName
       ? signTodayMessage.value?.endLocationName
       : signTodayMessage.value?.startLocationName;
   });
@@ -244,7 +276,7 @@ const signEnd = () => {
   api
     .signOut({
       userId: userId.value,
-      lateReason: earlyReason.value,
+      earlyReason: earlyReason.value,
       location: location.value,
       endLocationName: locationName.value
     })
@@ -254,6 +286,9 @@ const signEnd = () => {
       isEarly.value = false;
       earlyReason.value = '';
     });
+};
+const handleEditUser = () => {
+  showDialog.value = true;
 };
 </script>
 
@@ -276,8 +311,9 @@ const signEnd = () => {
       display: flex;
       align-items: center;
       flex-basis: 30%;
-      justify-content: flex-start;
+      justify-content: space-around;
       gap: 20px;
+      padding: 10px 10px;
       border-radius: 15px;
       border: 1px solid rgb(228, 231, 237);
 

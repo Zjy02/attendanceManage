@@ -3,7 +3,7 @@
     <div class="query-form">
       <el-form ref="form" :inline="true" :model="queryForm" size="small">
         <el-form-item label="审批状态" prop="state">
-          <el-select v-model="queryForm.applyState">
+          <el-select v-model="queryForm.applyState" style="width: 120px">
             <el-option label="所有" :value="0" />
             <el-option label="待审批" :value="1" />
             <el-option label="审批中" :value="2" />
@@ -12,14 +12,13 @@
             <el-option label="作废" :value="5" />
           </el-select>
         </el-form-item>
-
         <el-form-item>
           <el-button type="primary" @click="handleQuery">查询</el-button>
           <el-button @click="handleReset('form')">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
-    <div class="base-table">
+    <div class="base-table leave-table">
       <div class="action">
         <el-button
           type="primary"
@@ -30,21 +29,38 @@
         >
       </div>
       <div>
-        <el-table :data="applyList" size="small">
+        <el-table
+          :data="applyList"
+          size="small"
+          height="calc(100vh - 280px)"
+          border
+          stripe
+        >
           <el-table-column
             v-for="item in columns"
             :key="item.prop"
             :prop="item.prop"
             :label="item.label"
-            :width="item.width"
+            :minWidth="item.minWidth"
+            :fixed="item.fixed"
             :formatter="item.formatter"
-          />
-          <el-table-column label="操作" width="200">
+            tooltip-effect="dark"
+            align="center"
+          >
+            <template #default="{ row }">
+              <span v-if="item.prop === 'leaveTime'">{{
+                row[item.prop] + '天'
+              }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150" fixed="right">
             <template #default="scope">
               <el-button
                 type="primary"
                 @click="handleDetail(scope.row)"
                 v-has:add="'leave-query'"
+                size="small"
+                text
                 >查看</el-button
               >
               <el-button
@@ -52,6 +68,8 @@
                 @click="handleDelete(scope.row._id)"
                 v-if="[1, 2].includes(scope.row.applyState)"
                 v-has:add="'leave-delete'"
+                size="small"
+                text
                 >作废</el-button
               >
             </template>
@@ -59,10 +77,12 @@
         </el-table>
       </div>
       <el-pagination
-        v-model:current-page="currentpage"
-        :page-size="pager.pageSize"
+        class="pagination"
+        @current-change="getApplyList"
+        v-model:page-size="pager.pageSize"
         background
-        layout="prev, pager, next"
+        layout="total, prev, sizes, pager, next"
+        :page-sizes="[10, 20, 30, 40, 50, 100]"
         :total="pager.total"
       />
     </div>
@@ -86,6 +106,7 @@
             <el-col :span="8">
               <el-form-item prop="startTime" required>
                 <el-date-picker
+                  :disabled-date="justifyTime"
                   v-model="leaveForm.startTime"
                   type="date"
                   placeholder="请选择开始日期"
@@ -170,9 +191,12 @@
 import { watch } from 'vue';
 import utils from './../utils/utils';
 import { onMounted, ref, reactive, getCurrentInstance, toRaw } from 'vue';
+import storage from '../utils/storage';
+import dayjs from 'dayjs';
 export default {
   name: 'leave',
   setup() {
+    let userInfo;
     const detail = ref({});
     const showDetailModal = ref(false);
     const action = ref('');
@@ -198,25 +222,31 @@ export default {
     const columns = reactive([
       {
         label: '单号',
-        prop: 'orderNo'
+        prop: 'orderNo',
+        minWidth: '180px',
+        fixed: 'left'
       },
       {
         label: '休假时间',
         prop: '',
         formatter(row, columns, value) {
           return (
-            utils.formatDate(new Date(row.startTime), 'yyyy-MM-dd') +
-            utils.formatDate(new Date(row.endTime), 'yyyy-MM-dd')
+            dayjs(row.startTime).format('YYYY-MM-DD') +
+            ' 至 ' +
+            dayjs(row.endTime).format('YYYY-MM-DD')
           );
-        }
+        },
+        minWidth: '200px'
       },
       {
         label: '休假时长',
-        prop: 'leaveTime'
+        prop: 'leaveTime',
+        minWidth: '100px'
       },
       {
         label: '休假类型',
         prop: 'applyType',
+        minWidth: '100px',
         formatter(row, columns, value) {
           return {
             1: '事假',
@@ -227,27 +257,31 @@ export default {
       },
       {
         label: '休假原因',
-        prop: 'reasons'
+        prop: 'reasons',
+        minWidth: '150px'
       },
       {
         label: '申请时间',
         prop: 'createTime',
-        width: 180,
+        minWidth: '180px',
         formatter(row, columns, value) {
           return utils.formatDate(new Date(value));
         }
       },
       {
         label: '审批人',
-        prop: 'auditUsers'
+        prop: 'auditUsers',
+        minWidth: '180px'
       },
       {
         label: '当前审批人',
-        prop: 'curAuditUserName'
+        prop: 'curAuditUserName',
+        minWidth: '100px'
       },
       {
         label: '审批状态',
         prop: 'applyState',
+        minWidth: '100px',
         formatter(row, columns, value) {
           return {
             1: '待审批',
@@ -287,6 +321,7 @@ export default {
     //初始化数据
     onMounted(() => {
       getApplyList();
+      userInfo = storage.getItem('userInfo');
     });
     const getApplyList = async () => {
       let params = { ...queryForm, ...pager };
@@ -314,6 +349,11 @@ export default {
       getuserList();
     });
 
+    const justifyTime = (data) => {
+      const now = dayjs();
+      const t = dayjs(data);
+      return t.isSame(now, 'day') ? false : now.isAfter(t);
+    };
     //取消按钮关闭弹窗
     const handleClose = () => {
       showModal.value = false;
@@ -349,6 +389,7 @@ export default {
     };
 
     const handleDateChange = (key, val) => {
+      console.log(leaveForm);
       let { startTime, endTime } = leaveForm;
       if (!startTime || !endTime) {
         return;
@@ -360,14 +401,17 @@ export default {
           leaveForm[key] = '';
         });
       } else {
-        leaveForm.leaveTime =
-          (endTime - startTime) / (24 * 60 * 60 * 1000) + 1 + '天';
+        leaveForm.leaveTime = (endTime - startTime) / (24 * 60 * 60 * 1000) + 1;
       }
     };
     const handleSubmit = () => {
       proxy.$refs.dialogForm.validate(async (valid) => {
         if (valid) {
-          let params = { ...leaveForm, action: action.value };
+          let params = {
+            ...leaveForm,
+            action: action.value,
+            userId: userInfo.userId
+          };
           let res = await proxy.$api.leaveOperate(params);
           proxy.$message.success('创建成功');
           handleClose();
@@ -387,6 +431,7 @@ export default {
       rules,
       detail,
       showDetailModal,
+      justifyTime,
       handleDelete,
       handleDetail,
       handleDateChange,
@@ -403,6 +448,18 @@ export default {
 
 <style lang="scss">
 .pagination {
-  margin: 0 auto;
+  align-self: flex-end;
+}
+.query-form {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+.leave-table {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: calc(100vh - 170px);
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 </style>

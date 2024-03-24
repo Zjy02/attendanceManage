@@ -12,7 +12,7 @@
         text-color="#333"
         router
       >
-        <tree-menu :userMenu="MenuList" class="menu-container" />
+        <tree-menu :userMenu="MenuList" />
       </el-menu>
     </div>
     <div class="content-right">
@@ -27,12 +27,14 @@
             class="item"
             @click="this.$router.push('/audit/approve')"
           >
-            <el-icon color="blue" class="icon"><BellFilled /></el-icon>
+            <el-icon color="blue" class="icon" :size="25"
+              ><BellFilled
+            /></el-icon>
           </el-badge>
 
           <el-dropdown @command="handleLogout">
             <span class="el-dropdown-link">
-              <el-icon class="use-icon"><User /></el-icon>
+              <el-avatar :size="30" :src="avatar" style="margin-right: 20px" />
               <span class="use-name">
                 {{ userInfo.userName }}
               </span>
@@ -42,7 +44,7 @@
               <el-dropdown-menu>
                 <el-dropdown-item command="personCenter">
                   <el-icon><UserFilled /></el-icon>
-                  <span>个人中心</span>
+                  <span @click="pushPersonCenter">个人中心</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="logout">
                   <el-icon><Failed /></el-icon>
@@ -64,6 +66,7 @@
 import { ArrowDown } from '@element-plus/icons-vue';
 import TreeMenu from './TreeMenu.vue';
 import BreadCrumb from './BreadCrumb.vue';
+import storage from '../utils/storage';
 export default {
   name: 'home',
   components: { TreeMenu, BreadCrumb },
@@ -71,10 +74,19 @@ export default {
     return {
       isCollapse: false,
       userInfo: this.$store.state.userInfo,
-      noticeCount: 0,
       MenuList: [],
-      activeMenu: location.hash.slice(1)
+      activeMenu: location.hash.slice(1),
+      avatar:
+        'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
     };
+  },
+  created() {
+    // 监听路由变化
+    this.$watch('$route', (to, from) => {
+      this.getMenuItem();
+      // 在路由变化时执行的逻辑
+      console.log('Route changed from', from.path, 'to', to.path);
+    });
   },
   computed: {
     noticeCount() {
@@ -84,12 +96,16 @@ export default {
   mounted() {
     this.getNoticeCount();
     this.getMenuItem();
+    const userInfo = storage.getItem('userInfo');
+    if (userInfo.avatar) this.avatar = userInfo.avatar;
   },
   methods: {
     toggle() {
       this.isCollapse = !this.isCollapse;
     },
-
+    pushPersonCenter() {
+      this.$router.push('/personal');
+    },
     handleLogout(key) {
       if (key == 'logout') {
         this.$store.commit('saveUserInfo', '');
@@ -201,11 +217,12 @@ export default {
           user-select: none;
           height: 100%;
           display: flex;
+          align-items: center;
           .use-icon {
             margin-right: 10px;
           }
           .el-icon--right {
-            margin-left: 10px;
+            margin-left: 20px;
           }
         }
       }

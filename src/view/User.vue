@@ -57,11 +57,11 @@
           :key="item.prop"
           :prop="item.prop"
           :label="item.label"
-          :width="item.width"
+          :minWidth="item.minWidth"
           :formatter="item.formatter"
           align="center"
         />
-        <el-table-column label="操作" width="150" align="center">
+        <el-table-column label="操作" width="150" align="center" fixed="right">
           <template #default="scope">
             <el-button
               type="primary"
@@ -102,6 +102,13 @@
         <el-form-item label="用户名" prop="userName">
           <el-input
             v-model="userForm.userName"
+            :disabled="action == 'edit'"
+            placeholder="请输入用户名称"
+          />
+        </el-form-item>
+        <el-form-item label="姓名" prop="realName">
+          <el-input
+            v-model="userForm.realName"
             :disabled="action == 'edit'"
             placeholder="请输入用户名称"
           />
@@ -190,6 +197,7 @@ export default {
     const userForm = reactive({
       userName: '',
       state: 3,
+      realName: '',
       mobile: undefined
     });
     const rules = reactive({
@@ -203,6 +211,13 @@ export default {
           min: 2,
           max: 5,
           message: '名字长度应该为3到五5',
+          trigger: 'blur'
+        }
+      ],
+      realName: [
+        {
+          required: true,
+          message: '请输入姓名',
           trigger: 'blur'
         }
       ],
@@ -240,12 +255,17 @@ export default {
         prop: 'userId'
       },
       {
+        label: '姓名',
+        prop: 'realName'
+      },
+      {
         label: '用户名',
         prop: 'userName'
       },
       {
         label: '用户邮箱',
-        prop: 'userEmail'
+        prop: 'userEmail',
+        minWidth: '180'
       },
       {
         label: '用户角色',
@@ -271,7 +291,7 @@ export default {
       {
         label: '注册时间',
         prop: 'createTime',
-        width: 180,
+        minWidth: '180',
         formatter(row, columns, value) {
           return utils.formatDate(new Date(value));
         }
@@ -279,7 +299,7 @@ export default {
       {
         label: '最后登录时间',
         prop: 'lastLoginTime',
-        width: 180,
+        minWidth: '180',
         formatter(row, columns, value) {
           return utils.formatDate(new Date(value));
         }
@@ -391,8 +411,10 @@ export default {
     const handleEdit = (row) => {
       action.value = 'edit';
       showCreate.value = true;
+      const data = JSON.parse(JSON.stringify(row));
+      data.userEmail = data.userEmail.split('@')[0];
       proxy.$nextTick(() => {
-        Object.assign(userForm, row);
+        Object.assign(userForm, data);
       });
     };
     return {
@@ -430,6 +452,10 @@ export default {
 .pagination {
   margin: 0 auto;
 }
+.query-form {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
 .user-manger {
   height: 100%;
   width: 100%;
@@ -440,6 +466,8 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
     .action {
       align-self: flex-start;
     }

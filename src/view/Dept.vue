@@ -107,8 +107,8 @@
             <el-option
               v-for="item in userList"
               :key="item.userId"
-              :label="item.userName"
-              :value="`${item.userName}/${item.userId}/${item.userEmail}`"
+              :label="item.realName"
+              :value="`${item.userName}/${item.userId}/${item.userEmail}/${item.realName}`"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -148,7 +148,7 @@ export default {
         },
         {
           label: '负责人',
-          prop: 'userName',
+          prop: 'realName',
           minWidth: '100px'
         },
         {
@@ -215,7 +215,6 @@ export default {
     async getDeptList() {
       let list = await this.$api.getDeptList(this.queryForm);
       this.deptList = list;
-      console.log(list);
     },
     // 获取全部用户列表
     async getuserAllList() {
@@ -245,7 +244,7 @@ export default {
       this.handleReset('dialogForm');
       this.$nextTick(() => {
         Object.assign(this.deptForm, row, {
-          user: `${row.userName}/${row.userId}/${row.userEmail}`
+          user: `${row.userName}/${row.userId}/${row.userEmail}/${row.realName}`
         });
       });
     },
@@ -258,8 +257,9 @@ export default {
     },
     //获取用户的邮箱
     handleuser(val) {
-      const [userName, userId, userEmail] = val.split('/');
-      Object.assign(this.deptForm, { userName, userId, userEmail });
+      const [userName, userId, userEmail, realName] = val.split('/');
+      Object.assign(this.deptForm, { userName, userId, userEmail, realName });
+      console.log(this.deptForm);
     },
     //取消按钮
     handleColse() {
@@ -273,7 +273,6 @@ export default {
           let params = { ...this.deptForm };
           delete params.user;
           params.action = this.action;
-          console.log(params);
           await this.$api.deptOperate(params);
           this.handleColse();
           this.$message.success('操作成功');

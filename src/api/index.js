@@ -148,5 +148,54 @@ export default {
             data: params,
             method: 'POST',
         })
-    }
+    },
+    queryAllUserSalary(params) {
+        return request({
+            url: '/salarys/all/user/query',
+            data: params,
+            method: 'POST',
+        })
+    },
+    updateUserSalary(params) {
+        return request({
+            url: '/salarys/all/user/update',
+            data: params,
+            method: 'POST',
+        })
+    },
+    getUserInfo(params) {
+        return request({
+            url: '/users/userInfo/get',
+            data: params,
+            method: 'POST',
+        })
+    },
+    getSignByTime(params) {
+        return request({
+            url: '/registrated/sign/all/query',
+            data: params,
+            method: 'POST',
+        })
+    },
+    getSignListByTime(params) {
+        return request({
+            url: '/salarys/payroll/update/query',
+            data: params,
+            method: 'POST',
+        })
+    },
+    getAllUserPayRoll(params) {
+        return request({
+            url: '/salarys/payroll/all/query',
+            data: params,
+            method: 'POST',
+        })
+    },
+    updateUserPayRoll(params) {
+        return request({
+            url: '/salarys//payroll/update',
+            data: params,
+            method: 'POST',
+        })
+    },
 }

@@ -83,7 +83,7 @@ const rules = ref({
   ]
 });
 const user = reactive({
-  userName: 'admin',
+  userName: '',
   userPwd: '123456'
 });
 const regist = reactive({
@@ -101,8 +101,6 @@ let getButtons = (e) => {
         // await loadAsyncRoutes();
         Router.push('/welcome');
       });
-    } else {
-      return false;
     }
   });
 };
@@ -157,15 +155,13 @@ body {
 
 .shell {
   position: relative;
-  width: 1000px;
-  min-width: 1000px;
+  width: 900px;
+  min-width: 900px;
   min-height: 600px;
   height: 600px;
   padding: 25px;
   background-color: #ecf0f3;
-  box-shadow:
-    10px 10px 10px #d1d9e6,
-    -10px -10px 10px #f9f9f9;
+
   border-radius: 12px;
   overflow: hidden;
 }

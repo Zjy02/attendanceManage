@@ -303,10 +303,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.pagination {
-  margin: 0 auto;
+.query-form {
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 .menu-table {
   height: calc(100vh - 170px);
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 </style>
